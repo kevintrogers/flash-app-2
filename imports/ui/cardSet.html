@@ -1,0 +1,41 @@
+
+  <template name="cardSet">
+   
+		
+
+			  <div class="card">
+				<div class="card-content ">
+					<div class="edit-delete-buttons">
+						
+					
+						<span class="card-title">{{name}}</span>
+						<button class="delete"><span class="material-icons">
+						delete
+						</span></button>
+						<button class="edit"><span class="material-icons">
+						create
+						</span></button>
+					</div>
+					
+						
+					</div>
+				  <div class="card-content">
+				  <p>{{description}}</p>
+				</div>
+				<div class="card-action light-blue darken-3">
+				  <a class="white-text" >cards: {{cards.length}}</a>
+				  <button class="white-text" id="studyButton" >Study Now</button>
+				</div>
+			  </div>
+	
+	 
+	  {{#if editMode}}
+	  
+	  	{{> editCardSet}}
+	  {{/if}}
+	  
+	  
+	  
+	  
+	  
+  </template>

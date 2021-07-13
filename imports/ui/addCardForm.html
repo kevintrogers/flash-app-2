@@ -1,0 +1,45 @@
+<template name="addCardForm">
+			<h6>
+				
+	
+				{{currentSetName}}
+				
+			</h6>
+
+			 <label>Question</label>
+            <input type="text" name="key" id="key" />
+			 <label>Answer</label>
+            <input type="text" name="answer"  id="answer"/>
+
+			 
+			 <button class="add-card-button" type="button">
+				 Add Card
+			 </button>
+			 
+			 
+
+			 <button class="finish-button" type="button">
+				 Finished
+			 </button>
+		<table style="width:100%">
+		  <tr>
+			<th>Card #</th>
+			<th>Key</th>
+			<th>Answer</th>
+		  </tr>
+		{{#each currentCreatedCards}}
+		<tr>
+			<td>{{incremented @index}}  </td>
+			<td>{{key}}</td>
+			<td>{{answer}}</td>
+		</tr>
+		{{/each}}
+
+		</table>
+	
+	
+	
+		
+
+
+</template>

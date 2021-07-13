@@ -1,0 +1,93 @@
+<template name="editCardSet">
+	<div class="container">
+		
+	
+		<div class="card-content">
+
+
+			<div class="form-header">
+						{{currentSetName}}
+
+			</div>
+		</div>
+		
+			<div class='edit-form'>
+				<div class="row">
+					<div class="column">
+					</div> 
+					<div class="card-content">
+
+							<label>Set Name</label>
+							<input type="text" name="name" id="name" class="key" value={{name}} />
+						</div>
+						<div class="column">
+							<label>Set Description</label>
+							<input type="text" name="description" id="description" class="key" value={{description}} />
+						</div>
+							</div>
+						</div>
+
+				<div class="row">
+					<div class="column">
+						<div class="card-content">
+
+							 <label>Question</label>
+							<input type="text" name="key" id="key" value={{key}}>
+						</div>
+					<div class="column">
+
+						 <label>Answer</label>
+						<input type="text" name="answer"  id="answer" value={{answer}}>
+					
+				
+			</div>
+
+				 <div class="row">
+
+
+					 <button class="add-edit-card-button" type="button">
+						 Add Card
+					 </button>
+
+
+
+					 <button class="finish-edit-button" type="button">
+						 Finished
+					 </button>
+					 </div>
+				</div> 
+			</div> 
+
+
+
+				<table>
+				  <tr>
+					<th>Card #</th>
+					<th>Key</th>
+					<th>Answer</th>
+					<th>Remove</th>
+				  </tr>
+				{{#each currentCreatedCards.cards}}
+				<tr>
+					<td>{{incremented @index}}  </td>
+					<td>
+						<input type="text" name="updateKey" class="updateKey"  value={{key}}>
+					</td>
+					<td>
+						<input type="text" name="updateAnswer" class="updateAnswer" value={{answer}}>
+					</td>
+					<td>	
+
+						 <button id="delete-card-button" name="deletevalue" value={{key}}>
+							 x
+						</button>
+					</td>
+				</tr>
+				{{/each}}
+
+				</table>
+		
+	</div>
+	
+
+</template>

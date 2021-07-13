@@ -1,0 +1,65 @@
+<template id="study" name="study">
+
+		
+	
+	{{#if setChosen}}
+		{{#each cardStackItems.cards}}
+			
+
+				{{> cardItem}}
+
+		{{/each}}
+	
+		
+	{{else}}
+	<h5>
+		Choose Set To Study
+	</h5>
+     
+		  
+		  
+        {{#each cardSets}}
+          	{{> cardSet}}
+		  
+        {{/each}}
+		  
+      
+	
+	{{/if}}
+
+</template>
+
+
+<template name="cardItem">
+
+	<div class="card" id="flashCard">
+		{{#if frontSide}}
+		<div id="front">
+			<p>
+				{{key}}
+			</p>
+			
+		</div>
+		{{else}}
+		
+		<div id="back">
+			<p>
+				{{answer}}
+			</p>
+			
+		</div>
+		{{/if}}
+		<button id="flipButton">
+			Flip
+		</button>
+		<br>
+		<input type="checkbox" class="removeBox" id="flashCard" name="remove" checked={{checked}} value={{key}}>
+		<label for="removeBox"> Remove from set</label>
+	
+	
+	
+	
+	</div>
+
+</template>
+

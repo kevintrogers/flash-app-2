@@ -1,0 +1,229 @@
+$primary-color: #5459EB;
+	$secondary-color: #EB605A;
+	$tertiary-color: #6C6FEB;
+	$quaternary-color: #EBCE57;
+	$quinary-color: #60EB90;
+	$dark-text: #030303;
+
+
+body {
+  padding: 10px;
+  font-family: sans-serif;
+}
+header {
+	background: $tertiary-color;
+	display: flex;
+	justify-content: center;
+}
+table {
+	width:100%;
+}
+.checked {
+	display:none;
+}
+.container {
+	display: flex;
+	
+}
+.row {
+	display:flex;
+	flex-direction: row;
+}
+.column{
+	display: flex;
+	flex-direction: column;
+}
+.edit-form {
+	display: flex;
+	flex-direction: column;
+}
+//login
+#login-buttons {
+	position: absolute;
+	right: 1.1em;
+	
+}
+.login-link-text, .login-close-text {
+	
+}
+
+
+h1 {	
+	color: #fff;	
+}
+h2 {
+	font-style: italic;
+	display: flex;
+	justify-content:center;
+}
+
+h4 {
+	color: $secondary-color;
+}
+//loading
+@keyframes spin {
+  from {
+transform: rotate(0px);
+   transform-origin: 305px 165px;
+  }
+  to
+  {
+transform: rotate(720deg);
+	transform-origin: 305px 165px;
+  }
+}
+
+circle {
+   animation: spin 5.7s linear infinite;
+}
+.loader-wrapper {
+	width: 100%;
+	height:100%;
+	position: absolute;
+}
+.circle-of-circles {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+}
+ul {	
+	  list-style-type: none;	
+}
+
+//nav
+nav {
+  display: flex;
+	flex-flow: column nowrap;
+	align-items: stretch;
+	width: 100%;
+	background-color: $primary-color;
+  ul {
+	  display: flex;
+		
+	li {
+	  	flex-grow: 1;
+		button{
+			width: 100%;
+			height:100%;
+			background: none;
+			color: #fafafa;
+			border: 1px solid $tertiary-color;
+			border-radius: 5px;
+			
+		}
+	}
+  }
+}
+
+ .tab {
+	display: none;  
+}
+
+.active {
+  display: block;
+}
+//card
+.card-container {
+	display: flex;
+	justify-content: center;
+}
+.card-content {
+	 border: 1px solid #e5e5e5;
+	margin-top: 0;
+	margin-bottom: 0;
+	
+}
+.card {
+	// border: 1px solid #080808;
+	border-radius: 5px;
+	margin: 2em;
+	min-width: 400px;
+	
+	div p {
+		margin: 1.5em ;	
+		
+	}
+}
+.card:nth-child(1) {
+	background: $quinary-color;
+	color: #fff;
+}
+.card:nth-child(2n) {
+	background: $secondary-color;
+	color: $dark-text;
+}
+.card:nth-child(3n) {
+	background: $tertiary-color;
+	color: #fff;
+}
+.card:nth-child(4n) {
+	background: $quaternary-color;
+	color: $dark-text;
+}
+.card:nth-child(5n) {
+	background: $primary-color;
+	color: #fff;
+}
+//button
+button {
+	border-radius: 3px;	
+	border: none;
+}
+.delete {
+	background-color: transparent;
+	color: crimson;
+	
+}
+.form-header {
+	display: flex;
+	justify-content: center;
+	font-weight: 700;
+	font-style: italic;
+	font-size: 1.15em;
+	text-transform: uppercase;
+	margin-bottom: 1.5em;
+}
+.edit-delete-buttons {
+	justify-content: right;
+}
+.edit-form, .button-group{
+	display: flex;
+	justify-content: center;
+	
+}
+.edit {
+	background-color: transparent;
+	color: darkgreen;
+}
+#studyButton {
+	background-color: $primary-color;
+	color: #fff;
+	
+}
+#flipButton {
+	background-color: $primary-color;
+	color: #fff;
+	
+}
+//
+#help p {
+	
+}
+#help blockquote {
+	font-size: 95%;
+	font-style: italic;
+	background-color: #d0d0d0;
+}
+
+//edit 
+
+//footer
+footer {
+	position:fixed;
+	bottom: 0;
+	width: 100%;
+}
+footer nav {
+	background-color: $primary-color;
+	display:flex;
+}

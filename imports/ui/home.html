@@ -1,0 +1,17 @@
+<template name="home">
+	<h2>
+		Home
+	</h2>
+	{{#if currentUser}}
+	<p>
+		Welcome Back, {{currentUser.username}}.
+		Currently, you have <a id="tabButton3">{{cardSetsLength}} available card sets</a>.
+	</p>
+	{{else}}
+	<p>		
+		You are not logged in.
+	</p>
+	{{/if}}
+	
+	
+</template>
