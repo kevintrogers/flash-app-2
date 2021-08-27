@@ -27,3 +27,5 @@ accounts-ui-unstyled@1.4.3
 accounts-password@1.7.0
 
 fourseven:scss
+simple:reactive-method
+

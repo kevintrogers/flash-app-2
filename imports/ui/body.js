@@ -2,7 +2,6 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
 import { CardSets } from '../api/cards.js'; 
-import { Cards } from '../api/cards.js';
 
 import './cardSet.js';
 import './messages.js';
@@ -12,11 +11,39 @@ import './home.js';
 import './body.html';
 import './study.js';
 import './loading/loading.js'
-import './help.js';
+import './help.js'
 
     Meteor.subscribe('cardSets');
-	Meteor.subscribe('cards');
-  
+
+
+    Template.body.onCreated = function() {
+		
+		  console.log('Template onLoad');
+   
+	navigator.mediaDevices.getUserMedia({audio:true})
+	.then(stream => {handlerFunction(stream)})
+
+
+		  function handlerFunction(stream) {
+		  rec = new MediaRecorder(stream);
+		  rec.ondataavailable = e => {
+			audioChunks.push(e.data);
+			if (rec.state == "inactive"){
+			  let blob = new Blob(audioChunks,{type:'audio/mpeg-3'});
+			  recordedAudio.src = URL.createObjectURL(blob);
+			  recordedAudio.controls=true;
+			  recordedAudio.autoplay=true;
+			  sendData(blob)
+			}
+		  }
+		}
+			  function sendData(data) {}
+	}
+
+
+				 
+	
+
 
 document.addEventListener("DOMContentLoaded", function(){
 	$('.loader-wrapper').fadeOut('fast');
@@ -28,6 +55,11 @@ document.addEventListener("DOMContentLoaded", function(){
 Template.body.onCreated(function() {
 	this.setCreated = new ReactiveVar(false);
 	this.tempCardSetId = new ReactiveVar(0);
+	
+	this.audioStream = new ReactiveVar();
+	this.audioRecorder = new ReactiveVar();
+
+	// this.recordingState = new ReactiveVar(false);
 	
 
 });
@@ -44,6 +76,15 @@ Template.body.helpers({
 		setCreated = Template.instance().setCreated.get();
 		return setCreated;
 	},
+	audioRecorder(){
+		var audioRecorder = Template.instance().audioRecorder.get();
+		return audioRecorder;
+	},
+	audioStream(){
+		var audioStream = Template.instance().audioStream.get();
+		return audioStream;
+	}
+	
 
 });
 
@@ -92,18 +133,68 @@ Template.body.events({
 		let card = { 'key': key,
 					'answer': answer,
 					'keepInSet': true,
-					'setId': tempId
+					// 'setId': tempId
 				   };
-		Cards.insert({
-			 card
-			
-		})
+		
 		
 		CardSets.upsert( {_id: tempId}, {
       	$push: { cards: card},
     	});
 	  document.getElementById("key").value = '';
 	  document.getElementById("answer").value = '';
+		
+	},
+	'click #questionRecord'(event, template){
+
+		template.audioStream.set( navigator.mediaDevices.getUserMedia({audio:true})
+		.then(stream => {handlerFunction(stream)}));
+
+		function handlerFunction(stream) {
+            template = new MediaRecorder(stream);
+            rec.ondataavailable = e => {
+              audioChunks.push(e.data);
+              if (rec.state == "inactive"){
+                let blob = new Blob(audioChunks,{type:'audio/mpeg-3'});
+                questionRecordedAudio.src = URL.createObjectURL(blob);
+                questionRecordedAudio.controls=true;
+                questionRecordedAudio.autoplay=true;
+                sendData(blob)
+              }
+            }
+          }
+                function sendData(data) {}
+		
+		audioChunks = [];
+          rec.start();
+		var questionStopRecord = document.getElementById("questionStopRecord");
+		var questionRecord = document.getElementById("questionRecord");
+		
+		questionRecord.style.background = "none";
+		questionStopRecord.style.background = "red";
+		// FINISH INTEGRATING CODEPEN EXAMPLE INTO APP, make recording stop and 
+		//controls display
+
+		// const audioChunks = [];
+		// mediaRecorder.start();
+
+		// mediaRecorder.addEventListener("dataavailable", event => {
+		//   audioChunks.push(event.data);
+		// })
+	
+
+	},
+	'click #questionStopRecord'(event, template){
+
+		questionRecord.style.background = "green";
+		questionStopRecord.style.background = "none";
+
+		rec.stop();
+	},
+	'click #answerRecord'(){
+
+	},
+	'click #answerStopRecord'(){
+		
 		
 	},
 	'click .finish-button'(event, template){

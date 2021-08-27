@@ -4,14 +4,12 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import './addCardForm.html';
 import { CardSets } from '../api/cards.js';
 Meteor.subscribe('cardSets');
-Meteor.subscribe('cards');
 
 Template.addCardForm.onCreated(function() {
 	this.counter = new ReactiveVar(1);
-	console.log(this.counter);
-	
-   
-  
+	this.audioQuestion = new ReactiveVar(false);
+	this.audioAnswer = new ReactiveVar(false);
+	  
 });
 
 Template.addCardForm.helpers({
@@ -29,8 +27,35 @@ Template.addCardForm.helpers({
 		return currentCards;
 		
 	},
+	audioQuestion() {
+		return Template.instance().audioQuestion.get();
+	},
+	audioAnswer() {
+		return Template.instance().audioAnswer.get();
+	}
 
 	
+	
+});
+Template.addCardForm.events({
+	'click .questionToggleSwitch' (event, template){
+   var questionToggleButton = document.getElementById("questionToggleButton");
+
+   questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
+		template.audioQuestion.set(!template.audioQuestion.get());
+ 
+		
+	},
+	'click .answerToggleSwitch' (event, template){
+		const answerToggleButton = document.getElementById("answerToggleButton");
+
+  console.log(answerToggleButton);
+		answerToggleButton.classList.toggle("answerSecondaryTogglePosition");
+		template.audioAnswer.set(!template.audioAnswer.get());
+		
+ 
+		
+	},
 	
 });
 Template.registerHelper('incremented', function (index) {

@@ -1,45 +1,100 @@
 <template name="addCardForm">
-			<h6>
-				
-	
-				{{currentSetName}}
-				
-			</h6>
-
-			 <label>Question</label>
-            <input type="text" name="key" id="key" />
-			 <label>Answer</label>
-            <input type="text" name="answer"  id="answer"/>
-
-			 
-			 <button class="add-card-button" type="button">
-				 Add Card
-			 </button>
-			 
-			 
-
-			 <button class="finish-button" type="button">
-				 Finished
-			 </button>
-		<table style="width:100%">
-		  <tr>
-			<th>Card #</th>
-			<th>Key</th>
-			<th>Answer</th>
-		  </tr>
-		{{#each currentCreatedCards}}
-		<tr>
-			<td>{{incremented @index}}  </td>
-			<td>{{key}}</td>
-			<td>{{answer}}</td>
-		</tr>
-		{{/each}}
-
-		</table>
-	
-	
-	
+	<h6>
 		
+
+		{{currentSetName}}
+		
+	</h6>
+<div class="questionToggleSwitch" >
+
+  <button id="questionToggleButton" class="toggleButton">
+	{{#if audioQuestion}}
+	<span class="material-icons audio-icon">headset</span>
+	{{else}}
+	<span class="material-icons text-icon">text_fields</span>
+	{{/if}}
+	
+  </button>
+
+</div>
+
+	 <label>Question</label>
+
+{{#if audioQuestion}}
+
+					<p>
+		  <button id="questionRecord" class=' material-icons'>
+mic</button>
+		  <button id="questionStopRecord" class=' material-icons'>
+stop</button>
+	  </p>
+<p>
+
+		  <audio name="key" id="questionRecordedAudio"></audio>
+  
+	  </p>
+{{else}}
+	<input type="text" name="key" id="key" />
+{{/if}}
+<div class="answerToggleSwitch">
+ 
+  <button id="answerToggleButton" class="toggleButton">
+	{{#if audioAnswer}}
+	<span class="material-icons audio-icon">headset</span>
+	{{else}}
+	<span class="material-icons text-icon">text_fields</span>
+	{{/if}}
+  </button>
+
+
+</div>
+	 <label>Answer</label>
+
+{{#if audioAnswer}}
+
+	  <p>
+		  <button id="answerRecord" class=' material-icons'>
+mic</button>
+		  <button id="answerStopRecord " class=' material-icons'>
+stop</button>
+	  </p>
+	  <p>
+		  <audio name="answer" id="answerRecordedAudio"></audio>
+  
+	  </p>
+{{else}}
+	<input type="text" name="answer"  id="answer"/>
+{{/if}}
+
+	 
+	 <button class="add-card-button" type="button">
+		 Add Card
+	 </button>
+	 
+	 
+
+	 <button class="finish-button" type="button">
+		 Finished
+	 </button>
+<table style="width:100%">
+  <tr>
+	<th>Card #</th>
+	<th>Key</th>
+	<th>Answer</th>
+  </tr>
+{{#each currentCreatedCards}}
+<tr>
+	<td>{{incremented @index}}  </td>
+	<td>{{key}}</td>
+	<td>{{answer}}</td>
+</tr>
+{{/each}}
+
+</table>
+
+
+
+
 
 
 </template>

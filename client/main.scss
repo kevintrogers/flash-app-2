@@ -5,7 +5,10 @@ $primary-color: #5459EB;
 	$quinary-color: #60EB90;
 	$dark-text: #030303;
 
-
+#disabled {
+	width:1em;
+	height:1em;
+}
 body {
   padding: 10px;
   font-family: sans-serif;

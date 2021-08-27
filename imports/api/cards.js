@@ -3,7 +3,7 @@ import { Mongo } from 'meteor/mongo';
 
  
 export const CardSets = new Mongo.Collection('cardSets');
-export const Cards = new Mongo.Collection('cards');
+// export const Cards = new Mongo.Collection('cards');
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -11,10 +11,7 @@ if (Meteor.isServer) {
       return CardSets.find();
 
     });
-	    Meteor.publish('cards', function tasksPublication() {
-      return Cards.find();
 
-    });
 
   }
  
