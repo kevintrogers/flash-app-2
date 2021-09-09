@@ -1,7 +1,7 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import { CardSets } from '../api/cards.js'; 
+import { CardSets } from '../api/cards.js';
 
 import './cardSet.js';
 import './messages.js';
@@ -13,54 +13,24 @@ import './study.js';
 import './loading/loading.js'
 import './help.js'
 
-    Meteor.subscribe('cardSets');
+Meteor.subscribe('cardSets');
 
-
-    Template.body.onCreated = function() {
-		
-		  console.log('Template onLoad');
-   
-	navigator.mediaDevices.getUserMedia({audio:true})
-	.then(stream => {handlerFunction(stream)})
-
-
-		  function handlerFunction(stream) {
-		  rec = new MediaRecorder(stream);
-		  rec.ondataavailable = e => {
-			audioChunks.push(e.data);
-			if (rec.state == "inactive"){
-			  let blob = new Blob(audioChunks,{type:'audio/mpeg-3'});
-			  recordedAudio.src = URL.createObjectURL(blob);
-			  recordedAudio.controls=true;
-			  recordedAudio.autoplay=true;
-			  sendData(blob)
-			}
-		  }
-		}
-			  function sendData(data) {}
-	}
-
-
-				 
-	
-
-
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
 	$('.loader-wrapper').fadeOut('fast');
 
 });
 
 
 
-Template.body.onCreated(function() {
+Template.body.onCreated(function () {
 	this.setCreated = new ReactiveVar(false);
+	this.recordingSession = new ReactiveVar(false);
 	this.tempCardSetId = new ReactiveVar(0);
-	
-	this.audioStream = new ReactiveVar();
+	this.audioChunks = new ReactiveVar();
 	this.audioRecorder = new ReactiveVar();
-
-	// this.recordingState = new ReactiveVar(false);
-	
+	this.audioQuestionStatus = new ReactiveVar(false);
+	this.audioAnswerStatus = new ReactiveVar(false);
+	this.currentUpload = new ReactiveVar(false);
 
 });
 
@@ -70,140 +40,198 @@ let tempId;
 
 Template.body.helpers({
 	cardSets() {
-        return CardSets.find({}, { sort: { createdAt: -1 } });
-      },
-	setCreated(){
+		return CardSets.find({}, { sort: { createdAt: -1 } });
+	},
+	setCreated() {
 		setCreated = Template.instance().setCreated.get();
 		return setCreated;
 	},
-	audioRecorder(){
+	recordingSession() {
+		recordingSession = Template.instance().recordingSession.get();
+		return recordingSession;
+	},
+	audioRecorder() {
 		var audioRecorder = Template.instance().audioRecorder.get();
 		return audioRecorder;
 	},
-	audioStream(){
-		var audioStream = Template.instance().audioStream.get();
-		return audioStream;
-	}
-	
+	audioChunks() {
+		var audioChunks = Template.instance().audioChunks.get();
+		return audiochunks;
+	},
+	audioQuestionStatus(){
+		return Session.get('audioQuestionStatus');
+
+	},
+	audioAnswerStatus(){
+		var parentView = Blaze.currentView.parentView;
+		var parentInstance = parentView.templateInstance();
+		var status = parentInstance.audioAnswer.get();
+		Template.instance.audioAnswerStatus.set(status);
+		var audioAnswerStatus = Template.instance().audioAnswerStatus.get();
+		return audioAnswerStatus;
+	},
+	currentUpload() {
+		return Template.instance().currentUpload.get();
+	  }
+
+
 
 });
 
 Template.body.events({
-    'submit .new-card-set'(event, template) {
-	  template.setCreated.get();
-		
-	  template.setCreated.set(!this.setCreated);
-      event.preventDefault();
-  		
-   
-      const target = event.target;
-      const name = target.name.value;
-	  const description = target.description.value;
-	 	
-      CardSets.insert({
-        name: name,
-		description: description,
-        createdAt: new Date(), 
-		createdBy: Meteor.userId(),
-        username: Meteor.user().username,
-		searchable: 'false'
-      });
+	'submit .new-card-set'(event, template) {
+		template.setCreated.get();
+
+		template.setCreated.set(!this.setCreated);
+		event.preventDefault();
+
+
+		const target = event.target;
+		const name = target.name.value;
+		const description = target.description.value;
+
+		CardSets.insert({
+			name: name,
+			description: description,
+			createdAt: new Date(),
+			createdBy: Meteor.userId(),
+			username: Meteor.user().username,
+			searchable: 'false'
+		});
 		var findCollection = CardSets.find().fetch();
-		var cardSetsLength = findCollection.length-1;
+		var cardSetsLength = findCollection.length - 1;
 		var myId = findCollection[cardSetsLength]._id;
 		template.tempCardSetId.set(myId);
 
 		tempId = template.tempCardSetId.get();
 
 
-      target.name.value = '';
-	  target.description.value = '';
-    },
-	'click .add-card-button'(event, template){
-		
-
-	 const target = event.target;
-	
-      const key = document.getElementById("key").value;
-
-	  const answer = document.getElementById("answer").value;
-
-
-
-		let card = { 'key': key,
-					'answer': answer,
-					'keepInSet': true,
-					// 'setId': tempId
-				   };
-		
-		
-		CardSets.upsert( {_id: tempId}, {
-      	$push: { cards: card},
-    	});
-	  document.getElementById("key").value = '';
-	  document.getElementById("answer").value = '';
-		
+		target.name.value = '';
+		target.description.value = '';
 	},
-	'click #questionRecord'(event, template){
+	'click .add-card-button'(event, template) {
 
-		template.audioStream.set( navigator.mediaDevices.getUserMedia({audio:true})
-		.then(stream => {handlerFunction(stream)}));
-
-		function handlerFunction(stream) {
-            template = new MediaRecorder(stream);
-            rec.ondataavailable = e => {
-              audioChunks.push(e.data);
-              if (rec.state == "inactive"){
-                let blob = new Blob(audioChunks,{type:'audio/mpeg-3'});
-                questionRecordedAudio.src = URL.createObjectURL(blob);
-                questionRecordedAudio.controls=true;
-                questionRecordedAudio.autoplay=true;
-                sendData(blob)
-              }
-            }
-          }
-                function sendData(data) {}
+		const target = event.target;
 		
-		audioChunks = [];
-          rec.start();
-		var questionStopRecord = document.getElementById("questionStopRecord");
-		var questionRecord = document.getElementById("questionRecord");
 		
-		questionRecord.style.background = "none";
-		questionStopRecord.style.background = "red";
-		// FINISH INTEGRATING CODEPEN EXAMPLE INTO APP, make recording stop and 
-		//controls display
+		// const answer = document.getElementById("answer").value;
+		// const answerAudio = document.getElementById("answerRecordedAudio").value;
+		var trueKey, trueAnswer;
+		var audioQuestionStatus = Session.get('audioQuestionStatus');
+		
+		if (audioQuestionStatus) {
+			const keyAudio = document.getElementById("questionRecordedAudio").value;
 
-		// const audioChunks = [];
-		// mediaRecorder.start();
+			trueKey = keyAudio;
+			console.log(keyAudio);
+			console.log(trueKey);
+			console.log(audioQuestionStatus);
+		} else {
+			console.log(audioQuestionStatus);
+			const key = document.getElementById("key").value;
+			trueKey = key;
+			console.log(trueKey);
 
-		// mediaRecorder.addEventListener("dataavailable", event => {
-		//   audioChunks.push(event.data);
-		// })
-	
+			
+		}
+
+		if (template.audioAnswerStatus.get()) {
+			const answerAudio = document.getElementById("answerRecordedAudio").value;
+
+			trueAnswer = answerAudio;
+		} else {
+			const answer = document.getElementById("answer").value;
+			trueAnswer = answer;
+		}
+
+		
+		let card = {
+			'key': trueKey,
+			'answer': trueAnswer,
+			'keepInSet': true,
+			// 'setId': tempId
+		};
+
+
+		CardSets.upsert({ _id: tempId }, {
+			$push: { cards: card },
+		});
+		document.getElementById("key").value = '';
+		document.getElementById("answer").value = '';
 
 	},
-	'click #questionStopRecord'(event, template){
+	'click #questionRecord'(event, template) {
+		let recorder, gumStream;
+		var recordingSession = template.recordingSession.get();
 
-		questionRecord.style.background = "green";
-		questionStopRecord.style.background = "none";
+var recordButton = document.getElementById("questionAudioRecord");
 
-		rec.stop();
-	},
-	'click #answerRecord'(){
+	template.recordingSession.set(!recordingSession)
+	if (recordingSession) {
+		var audioRecorder = template.audioRecorder.get();
+		console.log("we do not have a recording session!");
+		audioRecorder.stop();
+		console.log(audioRecorder.state);
+		
+		//   gumStream.getAudioTracks()[0].stop();
+		  questionRecord.style.background ="red";
+	} else {
+		console.log("there is recording being done!");
+		questionRecord.style.background ="green";
+		navigator.mediaDevices.getUserMedia({
+            audio: true
+        }).then(function(stream) {
+            gumStream = stream;
+            recorder = new MediaRecorder(stream,{type:'audio/mpeg-3'});
+            //add blob
+			
+			recorder.ondataavailable = function(e) {
+                var url = URL.createObjectURL(e.data);
+                questionRecordedAudio.controls = true;
+                questionRecordedAudio.src = url;
+				console.log(url);
+            };
+			template.audioRecorder.set(recorder);
+            recorder.start();
+          console.log(recorder.state);
+        });
+    
+	}
+	const upload = AudioClips.insert({
+        file: e.currentTarget.files[0],
+        chunkSize: 'dynamic'
+      }, false);
+
+      upload.on('start', function () {
+        template.currentUpload.set(this);
+      });
+
+      upload.on('end', function (error, fileObj) {
+        if (error) {
+          alert(`Error during upload: ${error}`);
+        } else {
+          alert(`File "${fileObj.name}" successfully uploaded`);
+        }
+        template.currentUpload.set(false);
+      });
+
+      upload.start();
+},
+
+
+	'click #answerRecord'() {
 
 	},
-	'click #answerStopRecord'(){
-		
-		
-	},
-	'click .finish-button'(event, template){
-		
+
+	'click .finish-button'(event, template) {
+
 		template.setCreated.set(!setCreated);
-		tempId = '';		
-		
+		tempId = '';
+
 	},
 
-	
-  });
+
+});
+
+  //meteor method function handler use reactive method or other method
 

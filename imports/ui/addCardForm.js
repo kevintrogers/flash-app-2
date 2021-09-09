@@ -43,13 +43,15 @@ Template.addCardForm.events({
 
    questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
 		template.audioQuestion.set(!template.audioQuestion.get());
+		Session.set('audioQuestionStatus', template.audioQuestion.get());
+		console.log(template.audioQuestion.get());
  
 		
 	},
 	'click .answerToggleSwitch' (event, template){
 		const answerToggleButton = document.getElementById("answerToggleButton");
 
-  console.log(answerToggleButton);
+  
 		answerToggleButton.classList.toggle("answerSecondaryTogglePosition");
 		template.audioAnswer.set(!template.audioAnswer.get());
 		

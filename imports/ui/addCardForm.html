@@ -25,16 +25,15 @@
 					<p>
 		  <button id="questionRecord" class=' material-icons'>
 mic</button>
-		  <button id="questionStopRecord" class=' material-icons'>
-stop</button>
+
 	  </p>
 <p>
 
-		  <audio name="key" id="questionRecordedAudio"></audio>
+		  <audio name="audioKey" id="questionRecordedAudio"></audio>
   
 	  </p>
 {{else}}
-	<input type="text" name="key" id="key" />
+	<input type="text" name="key" value=" " id="key" />
 {{/if}}
 <div class="answerToggleSwitch">
  
@@ -63,7 +62,7 @@ stop</button>
   
 	  </p>
 {{else}}
-	<input type="text" name="answer"  id="answer"/>
+	<input type="text" name="answer"  value="" id="answer"/>
 {{/if}}
 
 	 
