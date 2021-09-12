@@ -62,7 +62,7 @@ stop</button>
   
 	  </p>
 {{else}}
-	<input type="text" name="answer"  value="" id="answer"/>
+	<input type="text" name="answer"  value=" " id="answer"/>
 {{/if}}
 
 	 
@@ -84,7 +84,12 @@ stop</button>
 {{#each currentCreatedCards}}
 <tr>
 	<td>{{incremented @index}}  </td>
+	{{#if audioKey}}
+	<td><audio controls=true src={{key}}> </audio></td>
+		{{else}}
 	<td>{{key}}</td>
+	{{/if}}
+	
 	<td>{{answer}}</td>
 </tr>
 {{/each}}

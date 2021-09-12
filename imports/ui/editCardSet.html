@@ -70,12 +70,29 @@
 				{{#each currentCreatedCards.cards}}
 				<tr>
 					<td>{{incremented @index}}  </td>
-					<td>
-						<input type="text" name="updateKey" class="updateKey"  value={{key}}>
-					</td>
+					<td>					
+					{{#if audioKey}}
+
+					<p>
+		  <button id="questionRecord" class=' material-icons'>
+mic</button>
+</p>
+
+
+  <audio name="audioKey" controls=true id="questionRecordedAudio" src="{{key}}"></audio>
+  
+	  
+{{else}}
+	<input type="text" name="updateKey" value="{{key}}" class="updateKey" />
+{{/if}}
+</td>
+					{{#if audioAnswer}}
+					<td><audio controls=true src={{answer}}> </audio></td>
+					{{else}}
 					<td>
 						<input type="text" name="updateAnswer" class="updateAnswer" value={{answer}}>
 					</td>
+					{{/if}}
 					<td>	
 
 						 <button id="delete-card-button" name="deletevalue" value={{key}}>

@@ -28,6 +28,8 @@ Template.body.onCreated(function () {
 	this.tempCardSetId = new ReactiveVar(0);
 	this.audioChunks = new ReactiveVar();
 	this.audioRecorder = new ReactiveVar();
+	this.audioQuestionSource = new ReactiveVar();
+	this.audioAnswerSource = new ReactiveVar();
 	this.audioQuestionStatus = new ReactiveVar(false);
 	this.audioAnswerStatus = new ReactiveVar(false);
 	this.currentUpload = new ReactiveVar(false);
@@ -58,15 +60,28 @@ Template.body.helpers({
 		var audioChunks = Template.instance().audioChunks.get();
 		return audiochunks;
 	},
+	audioQuestionSource() {
+		var audioQuestionSource = Template.instance().audioQuestionSource.get();
+		return audioQuestionSource;
+	},
+	audioAnswerSource() {
+		var audioAnswerSource = Template.instance().audioAnswerSource.get();
+		return audioAnswerSource;
+	},
 	audioQuestionStatus(){
-		return Session.get('audioQuestionStatus');
+		var parentView = Blaze.currentView.parentView;
+		var parentInstance = parentView.templateInstance();
+		var status = parentInstance.audioQuestion.get();
+		Template.instance().audioQuestionStatus.set(status);
+		var audioQuestionStatus = Template.instance().audioQuestionStatus.get();
+		return audioQuestionStatus;
 
 	},
 	audioAnswerStatus(){
 		var parentView = Blaze.currentView.parentView;
 		var parentInstance = parentView.templateInstance();
 		var status = parentInstance.audioAnswer.get();
-		Template.instance.audioAnswerStatus.set(status);
+		Template.instance().audioAnswerStatus.set(status);
 		var audioAnswerStatus = Template.instance().audioAnswerStatus.get();
 		return audioAnswerStatus;
 	},
@@ -116,29 +131,46 @@ Template.body.events({
 		
 		// const answer = document.getElementById("answer").value;
 		// const answerAudio = document.getElementById("answerRecordedAudio").value;
-		var trueKey, trueAnswer;
+		var trueKey, trueAnswer, audioKey, audioAnswer;
 		var audioQuestionStatus = Session.get('audioQuestionStatus');
 		
 		if (audioQuestionStatus) {
-			const keyAudio = document.getElementById("questionRecordedAudio").value;
-
+			const keyAudio = template.audioQuestionSource.get();
 			trueKey = keyAudio;
-			console.log(keyAudio);
-			console.log(trueKey);
-			console.log(audioQuestionStatus);
+			audioKey = true;
 		} else {
 			console.log(audioQuestionStatus);
 			const key = document.getElementById("key").value;
 			trueKey = key;
-			console.log(trueKey);
+			audioKey = false;
 
 			
 		}
 
 		if (template.audioAnswerStatus.get()) {
-			const answerAudio = document.getElementById("answerRecordedAudio").value;
+			const answerAudio = document.getElementById("answerRecordedAudio").src;
+			var ffmpeg = require('ffmpeg');
 
-			trueAnswer = answerAudio;
+			try {
+				var process = new ffmpeg(answerAudio);
+				process.then(function(audio) {
+					audio.fnExtractSoundToMP3(trueAnswer, function(error, file){
+						if (!error)
+							console.log('Audio file:' + file);
+						});
+					}, function (err) {
+						console.log('error' + err);
+					});
+				}
+				catch(e) {
+					console.log(e.code);
+					console.log(e.msg);
+				}
+			
+		
+			
+
+			
 		} else {
 			const answer = document.getElementById("answer").value;
 			trueAnswer = answer;
@@ -147,7 +179,9 @@ Template.body.events({
 		
 		let card = {
 			'key': trueKey,
+			'audioKey': audioKey,
 			'answer': trueAnswer,
+			'audioAnswer': audioAnswer,
 			'keepInSet': true,
 			// 'setId': tempId
 		};
@@ -156,15 +190,18 @@ Template.body.events({
 		CardSets.upsert({ _id: tempId }, {
 			$push: { cards: card },
 		});
+		//key and answer values can't be null IF STATMENTS if(value)?
+		if (template.audioQuestionStatus.get()){
 		document.getElementById("key").value = '';
 		document.getElementById("answer").value = '';
+	}
 
 	},
 	'click #questionRecord'(event, template) {
 		let recorder, gumStream;
 		var recordingSession = template.recordingSession.get();
 
-var recordButton = document.getElementById("questionAudioRecord");
+
 
 	template.recordingSession.set(!recordingSession)
 	if (recordingSession) {
@@ -182,14 +219,19 @@ var recordButton = document.getElementById("questionAudioRecord");
             audio: true
         }).then(function(stream) {
             gumStream = stream;
-            recorder = new MediaRecorder(stream,{type:'audio/mpeg-3'});
+            recorder = new MediaRecorder(stream);
             //add blob
 			
 			recorder.ondataavailable = function(e) {
-                var url = URL.createObjectURL(e.data);
+				let audioChunks =[];
+				audioChunks.push(e.data);
+				let blob = new Blob(audioChunks,{type:'audio/mpeg-3'})
+                var url = URL.createObjectURL(blob);
                 questionRecordedAudio.controls = true;
                 questionRecordedAudio.src = url;
+				template.audioQuestionSource.set(url);
 				console.log(url);
+				console.log(blob);
             };
 			template.audioRecorder.set(recorder);
             recorder.start();
@@ -197,25 +239,25 @@ var recordButton = document.getElementById("questionAudioRecord");
         });
     
 	}
-	const upload = AudioClips.insert({
-        file: e.currentTarget.files[0],
-        chunkSize: 'dynamic'
-      }, false);
+	// const upload = AudioClips.insert({
+    //     file: e.currentTarget.files[0],
+    //     chunkSize: 'dynamic'
+    //   }, false);
 
-      upload.on('start', function () {
-        template.currentUpload.set(this);
-      });
+    //   upload.on('start', function () {
+    //     template.currentUpload.set(this);
+    //   });
 
-      upload.on('end', function (error, fileObj) {
-        if (error) {
-          alert(`Error during upload: ${error}`);
-        } else {
-          alert(`File "${fileObj.name}" successfully uploaded`);
-        }
-        template.currentUpload.set(false);
-      });
+    //   upload.on('end', function (error, fileObj) {
+    //     if (error) {
+    //       alert(`Error during upload: ${error}`);
+    //     } else {
+    //       alert(`File "${fileObj.name}" successfully uploaded`);
+    //     }
+    //     template.currentUpload.set(false);
+    //   });
 
-      upload.start();
+    //   upload.start();
 },
 
 

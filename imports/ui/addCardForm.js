@@ -58,6 +58,10 @@ Template.addCardForm.events({
  
 		
 	},
+	'click .add-card-button' (event, template) {
+		template.audioQuestion.set(false);
+		template.audioAnswer.set(false);
+	}
 	
 });
 Template.registerHelper('incremented', function (index) {
