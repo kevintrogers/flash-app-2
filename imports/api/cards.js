@@ -1,38 +1,12 @@
 import { Mongo } from 'meteor/mongo';
-import { FilesCollection } from 'meteor/ostrio:files';
-import { MongoInternals } from 'meteor/mongo';
 
-export const createBucket = bucketName => {
-  const options = bucketName ? {bucketName} : (void 0);
-  return new MongoInternals.NpmModule.GridFSBucket(MongoInternals.defaultRemoteCollectionDriver().mongo.db, options);
-}
+import UploadClient from '@uploadcare/upload-client'
 
-const AudioClips = new FilesCollection({
-  collectionName: 'AudioClips',
-  allowClientCode: false, // Disallow remove files from Client
-  onBeforeUpload(file) {
-    // Allow upload files under 10MB, and only in png/jpg/jpeg formats
-    if (file.size <= 10485760 && /mp3/i.test(file.extension)) {
-      return true;
-    }
-    return 'Please upload audio, with size equal or less than 10MB';
-  }
-});
+const client = new UploadClient({ publicKey: '7284c98dd9b56f6e7489' })
+     
 
-if (Meteor.isClient) {
-  Meteor.subscribe('files.audioclips.all');
-}
-
-if (Meteor.isServer) {
-  Meteor.publish('files.audioclips.all', function () {
-    return AudioClips.find().cursor;
-  });
-}
-
-
- 
 export const CardSets = new Mongo.Collection('cardSets');
-// export const Cards = new Mongo.Collection('cards');
+export const AudioCollections = new Mongo.Collection('audioCollections');
 
 if (Meteor.isServer) {
     // This code only runs on the server
@@ -43,4 +17,27 @@ if (Meteor.isServer) {
 
 
   }
+
+  Meteor.methods({
+    'audioCollections.insertQuestionAudio'(questionAudio){
+
+      // var randomFileName = Date.now();
+			// var keyAudio = questionAudio;
+			// var audioFile = new File([keyAudio], randomFileName + '.mp3', { type: 'audio/mpeg' })
+			// console.log(audioFile)
+try{
+    client
+      .uploadFile(audioFile)
+      .then(file => console.log(file.uuid))
+
+console.log(keyAudio)
+} 
+catch (e){
+  console.log(e);
+}
+      
+
+    }
+
+  });
  

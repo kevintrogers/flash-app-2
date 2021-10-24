@@ -1,6 +1,9 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 
+import UploadClient from '@uploadcare/upload-client'
+const client = new UploadClient({ publicKey: '7284c98dd9b56f6e7489' })
+
 import { CardSets } from '../api/cards.js';
 
 import './cardSet.js';
@@ -14,6 +17,7 @@ import './loading/loading.js'
 import './help.js'
 
 Meteor.subscribe('cardSets');
+Meteor.subscribe('AudioCollections');
 
 document.addEventListener("DOMContentLoaded", function () {
 	$('.loader-wrapper').fadeOut('fast');
@@ -33,6 +37,7 @@ Template.body.onCreated(function () {
 	this.audioQuestionStatus = new ReactiveVar(false);
 	this.audioAnswerStatus = new ReactiveVar(false);
 	this.currentUpload = new ReactiveVar(false);
+	this.randomId = new ReactiveVar();
 
 });
 
@@ -69,25 +74,18 @@ Template.body.helpers({
 		return audioAnswerSource;
 	},
 	audioQuestionStatus(){
-		var parentView = Blaze.currentView.parentView;
-		var parentInstance = parentView.templateInstance();
-		var status = parentInstance.audioQuestion.get();
-		Template.instance().audioQuestionStatus.set(status);
-		var audioQuestionStatus = Template.instance().audioQuestionStatus.get();
-		return audioQuestionStatus;
-
+		return Session.get('audioQuestionStatus')
 	},
 	audioAnswerStatus(){
-		var parentView = Blaze.currentView.parentView;
-		var parentInstance = parentView.templateInstance();
-		var status = parentInstance.audioAnswer.get();
-		Template.instance().audioAnswerStatus.set(status);
-		var audioAnswerStatus = Template.instance().audioAnswerStatus.get();
-		return audioAnswerStatus;
+		return Session.get('audioAnswerStatus')
 	},
 	currentUpload() {
 		return Template.instance().currentUpload.get();
-	  }
+	  },
+	randomId() {
+		return Template.instance().randomId.get();
+	  },
+
 
 
 
@@ -127,7 +125,7 @@ Template.body.events({
 	'click .add-card-button'(event, template) {
 
 		const target = event.target;
-		
+		var tempUuId;
 		
 		// const answer = document.getElementById("answer").value;
 		// const answerAudio = document.getElementById("answerRecordedAudio").value;
@@ -135,9 +133,19 @@ Template.body.events({
 		var audioQuestionStatus = Session.get('audioQuestionStatus');
 		
 		if (audioQuestionStatus) {
-			const keyAudio = template.audioQuestionSource.get();
-			trueKey = keyAudio;
+			
+			var keyAudio = template.audioQuestionSource.get();
+client
+.uploadFile(keyAudio)
+.then(file => Session.set('tempUuId', file.uuid))
+
+
+			var tempUuId = Session.get('tempUuId');
+			var randomId = template.randomId.get();
+			https://ucarecdn.com/291f74d9-5523-4d4c-b68c-713ea67be2b5/1635026522581.mp3
+			trueKey = "https://ucarecdn.com/" + tempUuId + '/' + randomId + '.mp3';
 			audioKey = true;
+			console.log(trueKey);
 		} else {
 			console.log(audioQuestionStatus);
 			const key = document.getElementById("key").value;
@@ -147,25 +155,19 @@ Template.body.events({
 			
 		}
 
-		if (template.audioAnswerStatus.get()) {
-			const answerAudio = document.getElementById("answerRecordedAudio").src;
-			var ffmpeg = require('ffmpeg');
+		if (audioQuestionStatus) {
+			const questionAudio = template.audioQuestionSource.get();
+			// Meteor.call('audioCollections.insertQuestionAudio', {
+			// 	questionAudio: questionAudio
+			//   }, (err, res) => {
+			// 	if (err) {
+			// 	  alert(err);
+			// 	} else {
+			// 	  // success!
+			// 	}
+			//   });
 
-			try {
-				var process = new ffmpeg(answerAudio);
-				process.then(function(audio) {
-					audio.fnExtractSoundToMP3(trueAnswer, function(error, file){
-						if (!error)
-							console.log('Audio file:' + file);
-						});
-					}, function (err) {
-						console.log('error' + err);
-					});
-				}
-				catch(e) {
-					console.log(e.code);
-					console.log(e.msg);
-				}
+			
 			
 		
 			
@@ -225,13 +227,20 @@ Template.body.events({
 			recorder.ondataavailable = function(e) {
 				let audioChunks =[];
 				audioChunks.push(e.data);
-				let blob = new Blob(audioChunks,{type:'audio/mpeg-3'})
+				let blob = new Blob(audioChunks,{type:'audio/mpeg'})
                 var url = URL.createObjectURL(blob);
+
+				var randomFileName = Date.now();
+				template.randomId.set(randomFileName);
+				blob.lastModified = randomFileName;
+				blob.name = randomFileName + '.mp3';
+				
+				
                 questionRecordedAudio.controls = true;
                 questionRecordedAudio.src = url;
-				template.audioQuestionSource.set(url);
-				console.log(url);
-				console.log(blob);
+				template.audioQuestionSource.set(blob);
+				console.log('URL:' + url);
+				console.log('blob:' + blob);
             };
 			template.audioRecorder.set(recorder);
             recorder.start();
@@ -239,25 +248,7 @@ Template.body.events({
         });
     
 	}
-	// const upload = AudioClips.insert({
-    //     file: e.currentTarget.files[0],
-    //     chunkSize: 'dynamic'
-    //   }, false);
 
-    //   upload.on('start', function () {
-    //     template.currentUpload.set(this);
-    //   });
-
-    //   upload.on('end', function (error, fileObj) {
-    //     if (error) {
-    //       alert(`Error during upload: ${error}`);
-    //     } else {
-    //       alert(`File "${fileObj.name}" successfully uploaded`);
-    //     }
-    //     template.currentUpload.set(false);
-    //   });
-
-    //   upload.start();
 },
 
 
