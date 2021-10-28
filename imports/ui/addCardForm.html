@@ -39,8 +39,10 @@ mic</button>
  
   <button id="answerToggleButton" class="toggleButton">
 	{{#if audioAnswer}}
+	<p>{{audioAnswer}}</p>
 	<span class="material-icons audio-icon">headset</span>
 	{{else}}
+	<p>{{audioAnswer}}</p>
 	<span class="material-icons text-icon">text_fields</span>
 	{{/if}}
   </button>
@@ -54,11 +56,10 @@ mic</button>
 	  <p>
 		  <button id="answerRecord" class=' material-icons'>
 mic</button>
-		  <button id="answerStopRecord " class=' material-icons'>
-stop</button>
+
 	  </p>
 	  <p>
-		  <audio name="answer" id="answerRecordedAudio"></audio>
+		  <audio name="audioAnswer" id="answerRecordedAudio"></audio>
   
 	  </p>
 {{else}}
@@ -85,12 +86,15 @@ stop</button>
 <tr>
 	<td>{{incremented @index}}  </td>
 	{{#if audioKey}}
-	<td><audio controls=true src={{key}}> </audio></td>
+	<td><audio controls=true src={{key}}> </audio>{{audioKey}}</td>
 		{{else}}
-	<td>{{key}}</td>
+	<td>{{key}}{{audioKey}}</td>
 	{{/if}}
-	
+	{{#if audioAnswer}}
+					<td><audio controls=true src={{answer}}> </audio></td>
+					{{else}}
 	<td>{{answer}}</td>
+	{{/if}}
 </tr>
 {{/each}}
 

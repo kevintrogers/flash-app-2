@@ -24,21 +24,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-
-
 Template.body.onCreated(function () {
 	this.setCreated = new ReactiveVar(false);
 	this.recordingSession = new ReactiveVar(false);
 	this.tempCardSetId = new ReactiveVar(0);
 	this.audioChunks = new ReactiveVar();
 	this.audioRecorder = new ReactiveVar();
+	this.audioAnswerRecorder = new ReactiveVar();
 	this.audioQuestionSource = new ReactiveVar();
 	this.audioAnswerSource = new ReactiveVar();
 	this.audioQuestionStatus = new ReactiveVar(false);
 	this.audioAnswerStatus = new ReactiveVar(false);
 	this.currentUpload = new ReactiveVar(false);
-	this.randomId = new ReactiveVar();
-
+	this.randomKeyId = new ReactiveVar();
+	this.randomAnswerId = new ReactiveVar();
 });
 
 
@@ -59,6 +58,10 @@ Template.body.helpers({
 	},
 	audioRecorder() {
 		var audioRecorder = Template.instance().audioRecorder.get();
+		return audioRecorder;
+	},
+	audioAnswerRecorder() {
+		var audioRecorder = Template.instance().audioAnswerRecorder.get();
 		return audioRecorder;
 	},
 	audioChunks() {
@@ -82,8 +85,11 @@ Template.body.helpers({
 	currentUpload() {
 		return Template.instance().currentUpload.get();
 	  },
-	randomId() {
-		return Template.instance().randomId.get();
+	randomKeyId() {
+		return Template.instance().randomKeyId.get();
+	  },
+	randomAnswerId() {
+		return Template.instance().randomAnswerId.get();
 	  },
 
 
@@ -125,29 +131,27 @@ Template.body.events({
 	'click .add-card-button'(event, template) {
 
 		const target = event.target;
-		var tempUuId;
+		var tempKeyUuId;
 		
-		// const answer = document.getElementById("answer").value;
-		// const answerAudio = document.getElementById("answerRecordedAudio").value;
 		var trueKey, trueAnswer, audioKey, audioAnswer;
 		var audioQuestionStatus = Session.get('audioQuestionStatus');
 		
+		
 		if (audioQuestionStatus) {
-			
+			var tempQuestionId;
 			var keyAudio = template.audioQuestionSource.get();
 client
 .uploadFile(keyAudio)
-.then(file => Session.set('tempUuId', file.uuid))
-
-
-			var tempUuId = Session.get('tempUuId');
-			var randomId = template.randomId.get();
-			https://ucarecdn.com/291f74d9-5523-4d4c-b68c-713ea67be2b5/1635026522581.mp3
-			trueKey = "https://ucarecdn.com/" + tempUuId + '/' + randomId + '.mp3';
+.then(file => Session.set('tempKeyUuId', file.uuid))
+// ;
+// tempId not working
+			console.log(Session.get('tempKeyUuId'))
+			var tempKeyUuId = Session.get('tempKeyUuId');
+			var randomId = template.randomKeyId.get();
+			trueKey = "https://ucarecdn.com/" + tempKeyUuId + '/' + randomId;
 			audioKey = true;
 			console.log(trueKey);
 		} else {
-			console.log(audioQuestionStatus);
 			const key = document.getElementById("key").value;
 			trueKey = key;
 			audioKey = false;
@@ -157,26 +161,40 @@ client
 
 		if (audioQuestionStatus) {
 			const questionAudio = template.audioQuestionSource.get();
-			// Meteor.call('audioCollections.insertQuestionAudio', {
-			// 	questionAudio: questionAudio
-			//   }, (err, res) => {
-			// 	if (err) {
-			// 	  alert(err);
-			// 	} else {
-			// 	  // success!
-			// 	}
-			//   });
-
-			
-			
-		
-			
-
 			
 		} else {
-			const answer = document.getElementById("answer").value;
-			trueAnswer = answer;
+			const key = document.getElementById("key").value;
+			trueKey = key;
 		}
+
+///answer
+
+var audioAnswerStatus = Session.get('audioAnswerStatus');
+console.log(audioAnswerStatus);
+console.log('Session in the body:' + Session.get('audioAnswerStatus'));
+		
+if (audioAnswerStatus) {
+	
+	var answerAudio = template.audioAnswerSource.get();
+client
+.uploadFile(answerAudio)
+.then(file => Session.set('tempAnswerUuId', file.uuid));
+
+	var audioAnswer;
+	var tempAnswerUuId = Session.get('tempAnswerUuId');
+	console.log(Session.get('tempAnswerUuId'));
+	var randomAnswerId = template.randomAnswerId.get();
+	trueAnswer = "https://ucarecdn.com/" + tempAnswerUuId + '/' + randomAnswerId;
+	audioAnswer = true;
+} else {
+	const answer = document.getElementById("answer").value;
+	trueAnswer = answer;
+	audioAnswer = false;
+
+	
+}
+
+
 
 		
 		let card = {
@@ -200,7 +218,7 @@ client
 
 	},
 	'click #questionRecord'(event, template) {
-		let recorder, gumStream;
+		let recorder;
 		var recordingSession = template.recordingSession.get();
 
 
@@ -212,7 +230,6 @@ client
 		audioRecorder.stop();
 		console.log(audioRecorder.state);
 		
-		//   gumStream.getAudioTracks()[0].stop();
 		  questionRecord.style.background ="red";
 	} else {
 		console.log("there is recording being done!");
@@ -220,7 +237,6 @@ client
 		navigator.mediaDevices.getUserMedia({
             audio: true
         }).then(function(stream) {
-            gumStream = stream;
             recorder = new MediaRecorder(stream);
             //add blob
 			
@@ -230,10 +246,11 @@ client
 				let blob = new Blob(audioChunks,{type:'audio/mpeg'})
                 var url = URL.createObjectURL(blob);
 
-				var randomFileName = Date.now();
-				template.randomId.set(randomFileName);
+				let randomFileName = Date.now();
+				template.randomKeyId.set(randomFileName);
 				blob.lastModified = randomFileName;
-				blob.name = randomFileName + '.mp3';
+				blob.name = randomFileName;
+				template.randomKeyId.set(randomFileName);
 				
 				
                 questionRecordedAudio.controls = true;
@@ -252,7 +269,53 @@ client
 },
 
 
-	'click #answerRecord'() {
+	'click #answerRecord'(event, template) {
+		let recorder;
+		var recordingSession = template.recordingSession.get();
+
+	template.recordingSession.set(!recordingSession)
+	if (recordingSession) {
+		var audioRecorder = template.audioAnswerRecorder.get();
+		console.log("we do not have a recording session!");
+		audioRecorder.stop();
+		console.log(audioRecorder.state);
+		
+		  answerRecord.style.background ="red";
+	} else {
+		console.log("there is recording being done!");
+		answerRecord.style.background ="green";
+		navigator.mediaDevices.getUserMedia({
+            audio: true
+        }).then(function(stream) {
+            recorder = new MediaRecorder(stream);
+            //add blob
+			
+			recorder.ondataavailable = function(e) {
+				let audioChunks =[];
+				audioChunks.push(e.data);
+				let blob = new Blob(audioChunks,{type:'audio/mpeg'})
+                var url = URL.createObjectURL(blob);
+
+				var randomFileName = Date.now();
+				template.randomAnswerId.set(randomFileName);
+				blob.lastModified = randomFileName;
+				blob.name = randomFileName;
+				template.randomAnswerId.set(randomFileName);
+				
+				
+                answerRecordedAudio.controls = true;
+                answerRecordedAudio.src = url;
+				template.audioAnswerSource.set(blob);
+				console.log('URL:' + url);
+				console.log('blob:' + blob);
+            };
+			template.audioAnswerRecorder.set(recorder);
+            recorder.start();
+          console.log(recorder.state);
+        });
+    
+	}
+
 
 	},
 
@@ -265,6 +328,4 @@ client
 
 
 });
-
-  //meteor method function handler use reactive method or other method
 

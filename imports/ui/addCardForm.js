@@ -28,39 +28,46 @@ Template.addCardForm.helpers({
 		
 	},
 	audioQuestion() {
-		return Template.instance().audioQuestion.get();
+			return Template.instance().audioQuestion.get();
 	},
-	audioAnswer() {
+	audioAnswer() {		
+		
 		return Template.instance().audioAnswer.get();
 	}
 
 	
 	
 });
+
+
 Template.addCardForm.events({
 	'click .questionToggleSwitch' (event, template){
    var questionToggleButton = document.getElementById("questionToggleButton");
 
-   questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
+   		questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
 		template.audioQuestion.set(!template.audioQuestion.get());
 		Session.set('audioQuestionStatus', template.audioQuestion.get());
-		console.log(template.audioQuestion.get());
  
 		
 	},
 	'click .answerToggleSwitch' (event, template){
-		const answerToggleButton = document.getElementById("answerToggleButton");
 
+		
+		var answerToggleButton = document.getElementById("answerToggleButton");
   
-		answerToggleButton.classList.toggle("answerSecondaryTogglePosition");
+		answerToggleButton.classList.toggle('answerSecondaryTogglePosition');
 		template.audioAnswer.set(!template.audioAnswer.get());
+		Session.set('audioAnswerStatus', template.audioAnswer.get());
+
+		
 		
  
 		
 	},
 	'click .add-card-button' (event, template) {
-		template.audioQuestion.set(false);
-		template.audioAnswer.set(false);
+		// template.audioQuestion.set(false);
+		// template.audioAnswer.set(false);
+
 	}
 	
 });
