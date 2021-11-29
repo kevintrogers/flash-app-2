@@ -85,12 +85,12 @@ mic</button>
 {{#each currentCreatedCards}}
 <tr>
 	<td>{{incremented @index}}  </td>
-	{{#if audioKey}}
-	<td><audio controls=true src={{key}}> </audio>{{audioKey}}</td>
+	{{#if audioKeyBoolean}}
+	<td><audio controls=true src={{key}}> </audio>{{audioKeyBoolean}}</td>
 		{{else}}
 	<td>{{key}}{{audioKey}}</td>
 	{{/if}}
-	{{#if audioAnswer}}
+	{{#if audioAnswerBoolean}}
 					<td><audio controls=true src={{answer}}> </audio></td>
 					{{else}}
 	<td>{{answer}}</td>

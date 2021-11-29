@@ -9,6 +9,7 @@ Template.addCardForm.onCreated(function() {
 	this.counter = new ReactiveVar(1);
 	this.audioQuestion = new ReactiveVar(false);
 	this.audioAnswer = new ReactiveVar(false);
+
 	  
 });
 
@@ -38,7 +39,7 @@ Template.addCardForm.helpers({
 	
 	
 });
-
+Session.set('audioQuestionStatus' , false);
 
 Template.addCardForm.events({
 	'click .questionToggleSwitch' (event, template){
@@ -46,7 +47,7 @@ Template.addCardForm.events({
 
    		questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
 		template.audioQuestion.set(!template.audioQuestion.get());
-		Session.set('audioQuestionStatus', template.audioQuestion.get());
+		Session.set('audioQuestionStatus', (!Session.get('audioQuestionStatus')));
  
 		
 	},

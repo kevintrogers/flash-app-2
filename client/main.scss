@@ -31,6 +31,9 @@ table {
 	display: flex;
 	
 }
+section{
+	min-height: 100vh;
+}
 .row {
 	display:flex;
 	flex-direction: row;

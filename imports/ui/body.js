@@ -35,9 +35,12 @@ Template.body.onCreated(function () {
 	this.audioAnswerSource = new ReactiveVar();
 	this.audioQuestionStatus = new ReactiveVar(false);
 	this.audioAnswerStatus = new ReactiveVar(false);
-	this.currentUpload = new ReactiveVar(false);
+	this.keyEstablished = new ReactiveVar(false);
+	this.answerEstablished = new ReactiveVar(false);
+	
 	this.randomKeyId = new ReactiveVar();
-	this.randomAnswerId = new ReactiveVar();
+	this.randomAnswerId = new ReactiveVar();	
+	this.tempCard = new ReactiveVar();
 });
 
 
@@ -82,14 +85,20 @@ Template.body.helpers({
 	audioAnswerStatus(){
 		return Session.get('audioAnswerStatus')
 	},
-	currentUpload() {
-		return Template.instance().currentUpload.get();
+	keyEstablished() {
+		return Template.instance().keyEstablished.get();
+	  },
+	  answerEstablished() {
+		return Template.instance().answerEstablished.get();
 	  },
 	randomKeyId() {
 		return Template.instance().randomKeyId.get();
 	  },
 	randomAnswerId() {
 		return Template.instance().randomAnswerId.get();
+	  },
+	  tempCard() {
+		return Template.instance().tempCard.get();
 	  },
 
 
@@ -129,92 +138,98 @@ Template.body.events({
 		target.description.value = '';
 	},
 	'click .add-card-button'(event, template) {
-
-		const target = event.target;
-		var tempKeyUuId;
-		
-		var trueKey, trueAnswer, audioKey, audioAnswer;
-		var audioQuestionStatus = Session.get('audioQuestionStatus');
-		
-		
+		var card = {}
+		Session.set('keyEstablished', false);
+		var audioQuestionStatus = Session.get("audioQuestionStatus");
+		Session.set('answerEstablished', false);
+		var audioAnswerStatus = Session.get("audioAnswerStatus");
+		console.log('audioQuestionStatus:' + audioQuestionStatus)
 		if (audioQuestionStatus) {
 			var tempQuestionId;
 			var keyAudio = template.audioQuestionSource.get();
-client
-.uploadFile(keyAudio)
-.then(file => Session.set('tempKeyUuId', file.uuid))
-// ;
-// tempId not working
-			console.log(Session.get('tempKeyUuId'))
-			var tempKeyUuId = Session.get('tempKeyUuId');
-			var randomId = template.randomKeyId.get();
-			trueKey = "https://ucarecdn.com/" + tempKeyUuId + '/' + randomId;
-			audioKey = true;
-			console.log(trueKey);
+			client.uploadFile(keyAudio).then((file) => {
+				Session.set("tempKeyUuId", file.uuid);
+				console.log(Session.get("tempKeyUuId"));
+				tempKeyUuId = Session.get("tempKeyUuId");
+				var randomId = template.randomKeyId.get();
+				trueKey = "https://ucarecdn.com/" + tempKeyUuId + "/" + randomId;
+				audioKeyBoolean = true;
+				console.log(trueKey);
+				card.key = trueKey;
+				card.audioKeyBoolean = audioKeyBoolean;
+				template.tempCard.set(card);
+				Session.set('keyEstablished', true);
+				console.log('keyEstablished in async function' + Session.get( 'keyEstablished'))
+				
+			});
 		} else {
-			const key = document.getElementById("key").value;
 			trueKey = key;
-			audioKey = false;
-
-			
+			audioKeyBoolean = false;
+			card.key = document.getElementById("key").value;
+			card.audioKeyBoolean = audioKeyBoolean;
+			Session.set('keyEstablished', true);
 		}
-
-		if (audioQuestionStatus) {
-			const questionAudio = template.audioQuestionSource.get();
-			
-		} else {
-			const key = document.getElementById("key").value;
-			trueKey = key;
-		}
-
-///answer
-
-var audioAnswerStatus = Session.get('audioAnswerStatus');
-console.log(audioAnswerStatus);
-console.log('Session in the body:' + Session.get('audioAnswerStatus'));
 		
-if (audioAnswerStatus) {
-	
-	var answerAudio = template.audioAnswerSource.get();
-client
-.uploadFile(answerAudio)
-.then(file => Session.set('tempAnswerUuId', file.uuid));
+		if (audioAnswerStatus) {
+			var tempAnswerId;
+			var answerAudio = template.audioAnswerSource.get();
+			client.uploadFile(answerAudio).then((file) => {
+				Session.set("tempAnswerUuId", file.uuid);
+				console.log(Session.get("tempAnswerUuId"));
+				tempAnswerUuId = Session.get("tempAnswerUuId");
+				var randomId = template.randomAnswerId.get();
+				trueAnswer = "https://ucarecdn.com/" + tempAnswerUuId + "/" + randomId;
+				audioAnswerBoolean = true;
+				console.log(trueKey);
+				card.answer = trueAnswer;
+				card.audioAnswerBoolean = audioAnswerBoolean;
+				template.tempCard.set(card);
+				Session.set('answerEstablished', true);
+				console.log('answerEstablished in async function' + Session.get( 'answerEstablished'))
+				
+			});
+		} else {
+			trueAnswer = answer;
+			audioAnswerBoolean = false;
+			card.answer = document.getElementById("answer").value;
+			card.audioAnswerBoolean = audioAnswerBoolean;
+			Session.set('answerEstablished', true);
+		}
 
-	var audioAnswer;
-	var tempAnswerUuId = Session.get('tempAnswerUuId');
-	console.log(Session.get('tempAnswerUuId'));
-	var randomAnswerId = template.randomAnswerId.get();
-	trueAnswer = "https://ucarecdn.com/" + tempAnswerUuId + '/' + randomAnswerId;
-	audioAnswer = true;
-} else {
-	const answer = document.getElementById("answer").value;
-	trueAnswer = answer;
-	audioAnswer = false;
-
+		
+				
+		var keyInitiziationInterval = setInterval(initializationCheck, 300);
+		function initializationCheck() {
+			var keyIntialized = Session.get('keyEstablished');
+			var answerIntialized = Session.get('keyEstablished');
+			console.log('init check')
+			var cardString = JSON.stringify(card);
+			console.log (cardString);
+			console.log('keyEstablished outside async function' + Session.get( 'keyEstablished'))
+		
+		if(keyIntialized && answerIntialized){
+			clearInterval(keyInitiziationInterval);
+		
+		console.log ('key Initialized:' + keyIntialized);
+		console.log ('answer Initialized:' + keyIntialized);
+		console.log ('inside if statement' + cardString);
+		
+	CardSets.upsert({ _id: tempId }, {
+		$push: { cards: card},
+	});
 	
 }
+		}
 
-
-
-		
-		let card = {
-			'key': trueKey,
-			'audioKey': audioKey,
-			'answer': trueAnswer,
-			'audioAnswer': audioAnswer,
-			'keepInSet': true,
-			// 'setId': tempId
-		};
-
-
-		CardSets.upsert({ _id: tempId }, {
-			$push: { cards: card },
-		});
-		//key and answer values can't be null IF STATMENTS if(value)?
 		if (template.audioQuestionStatus.get()){
+			template.audioKeyBoolean.set('false');
+			Session.set('answerAudioBoolean', false);
+			template.audioAnswerBoolean.set('false');
+			Session.set('answerAudioBoolean', false);
 		document.getElementById("key").value = '';
 		document.getElementById("answer").value = '';
 	}
+	
 
 	},
 	'click #questionRecord'(event, template) {

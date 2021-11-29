@@ -71,7 +71,7 @@
 				<tr>
 					<td>{{incremented @index}}  </td>
 					<td>					
-					{{#if audioKey}}
+					{{#if audioKeyBoolean}}
 
 					<p>
 		  <button id="questionRecord" class=' material-icons'>
@@ -86,7 +86,7 @@ mic</button>
 	<input type="text" name="updateKey" value="{{key}}" class="updateKey" />
 {{/if}}
 </td>
-					{{#if audioAnswer}}
+					{{#if audioAnswerBoolean}}
 					<td><audio controls=true src={{answer}}> </audio></td>
 					{{else}}
 					<td>

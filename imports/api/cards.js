@@ -19,22 +19,11 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'audioCollections.insertQuestionAudio'(questionAudio){
+    'cardSets.insertCard'(id, card){
+      CardSets.upsert({ _id: id }, {
+        $push: { cards: card },
+      });
 
-      // var randomFileName = Date.now();
-			// var keyAudio = questionAudio;
-			// var audioFile = new File([keyAudio], randomFileName + '.mp3', { type: 'audio/mpeg' })
-			// console.log(audioFile)
-try{
-    client
-      .uploadFile(audioFile)
-      .then(file => console.log(file.uuid))
-
-console.log(keyAudio)
-} 
-catch (e){
-  console.log(e);
-}
       
 
     }
