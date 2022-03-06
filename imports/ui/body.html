@@ -10,7 +10,6 @@
 		 
 		  {{> loginButtons}}
 	   </header>
-
 	<div class="loader-wrapper">
 			{{> loading}}
 	</div>
@@ -50,17 +49,30 @@
 		  
 		  	<form class="new-card-set">
 				
-							 
+						 
 				 <label>Set Name</label>
-				<input type="text" name="name" />
-				 
+				<input type="text" name="name" placeholder="Name your set so others can find it" required/>
+				 <br>
 				<label>Set Description</label>
-				<input type="text" name="description"  />
+				<input type="text" name="description" placeholder="Describe your set so others know what's in it" required/>
+				<br>
 				
+				 <input type="checkbox" id="searchable" name="keyFormat" Checked>
+				   <label for="text">Make set searchable</label><br>
+				 <p>Select your question format</p>
+				  <input type="radio" id="text" name="keyFormat" value="false">
+				  <label for="text">Text</label><br>
+				  <input type="radio" id="audio" name="keyFormat" value="true">
+				  <label for="audio">Audio</label><br>
+				<br>
+				<p>Select your answer format</p>
+				  <input type="radio" id="text" name="answerFormat" value="false">
+				  <label for="text">Text</label><br>
+				  <input type="radio" id="audio" name="answerFormat" value="true">
+				  <label for="audio">Audio</label><br>
 				<button class="submit-button" type="submit">
-					 Submit
-				 </button>
-				
+					Submit
+				</button>
 			</form>
 	</template>
 

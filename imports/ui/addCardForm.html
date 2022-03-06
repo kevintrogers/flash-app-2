@@ -5,7 +5,7 @@
 		{{currentSetName}}
 		
 	</h6>
-<div class="questionToggleSwitch" >
+<!-- <div class="questionToggleSwitch" >
 
   <button id="questionToggleButton" class="toggleButton">
 	{{#if audioQuestion}}
@@ -16,14 +16,13 @@
 	
   </button>
 
-</div>
+</div> -->
 
 	 <label>Question</label>
-
 {{#if audioQuestion}}
 
 					<p>
-		  <button id="questionRecord" class=' material-icons'>
+		  <button id="questionRecord" class='material-icons'>
 mic</button>
 
 	  </p>
@@ -33,25 +32,12 @@ mic</button>
   
 	  </p>
 {{else}}
-	<input type="text" name="key" value=" " id="key" />
+	<input type="text" name="key" value=" " id="key" required/>
 {{/if}}
-<div class="answerToggleSwitch">
- 
-  <button id="answerToggleButton" class="toggleButton">
-	{{#if audioAnswer}}
-	<p>{{audioAnswer}}</p>
-	<span class="material-icons audio-icon">headset</span>
-	{{else}}
-	<p>{{audioAnswer}}</p>
-	<span class="material-icons text-icon">text_fields</span>
-	{{/if}}
-  </button>
 
-
-</div>
 	 <label>Answer</label>
-
 {{#if audioAnswer}}
+
 
 	  <p>
 		  <button id="answerRecord" class=' material-icons'>
@@ -63,7 +49,7 @@ mic</button>
   
 	  </p>
 {{else}}
-	<input type="text" name="answer"  value=" " id="answer"/>
+	<input type="text" name="answer"  value=" " id="answer" required/>
 {{/if}}
 
 	 
@@ -86,9 +72,9 @@ mic</button>
 <tr>
 	<td>{{incremented @index}}  </td>
 	{{#if audioKeyBoolean}}
-	<td><audio controls=true src={{key}}> </audio>{{audioKeyBoolean}}</td>
+	<td><audio controls=true src={{key}}> </audio></td>
 		{{else}}
-	<td>{{key}}{{audioKey}}</td>
+	<td>{{key}}</td>
 	{{/if}}
 	{{#if audioAnswerBoolean}}
 					<td><audio controls=true src={{answer}}> </audio></td>

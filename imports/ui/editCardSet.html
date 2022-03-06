@@ -1,5 +1,5 @@
 <template name="editCardSet">
-	<div class="container">
+	<div class="edit-container">
 		
 	
 		<div class="card-content">
@@ -7,6 +7,7 @@
 
 			<div class="form-header">
 						{{currentSetName}}
+						audioKey: {{audioQuestionFormat}} audioanswer: {{audioAnswerFormat}}
 
 			</div>
 		</div>
@@ -31,15 +32,41 @@
 					<div class="column">
 						<div class="card-content">
 
+
 							 <label>Question</label>
-							<input type="text" name="key" id="key" value={{key}}>
+							 {{#if keyFormat}}
+
+					<p>
+		  <button id="questionRecord" class=' material-icons'>
+mic</button>
+
+	  </p>
+<p>
+
+		  <audio name="audioKey" id="questionRecordedAudio"></audio>
+  
+	  </p>
+{{else}}
+	<input type="text" name="key" value=" " id="key" />
+{{/if}}
 						</div>
 					<div class="column">
-
 						 <label>Answer</label>
-						<input type="text" name="answer"  id="answer" value={{answer}}>
-					
-				
+						 {{#if answerFormat}}
+
+
+						 <p>
+							 <button id="answerRecord" class=' material-icons'>
+				   mic</button>
+				   
+						 </p>
+						 <p>
+							 <audio name="audioAnswer" id="answerRecordedAudio"></audio>
+					 
+						 </p>
+				   {{else}}
+					   <input type="text" name="answer"  value=" " id="answer" required/>
+				   {{/if}}
 			</div>
 
 				 <div class="row">
@@ -61,33 +88,38 @@
 
 
 				<table>
+					
 				  <tr>
 					<th>Card #</th>
 					<th>Key</th>
 					<th>Answer</th>
 					<th>Remove</th>
 				  </tr>
-				{{#each currentCreatedCards.cards}}
+				{{#each cards}}
 				<tr>
 					<td>{{incremented @index}}  </td>
-					<td>					
+					<td>	
+									
 					{{#if audioKeyBoolean}}
 
-					<p>
-		  <button id="questionRecord" class=' material-icons'>
+					
+		  <button name="keyButton{{incremented @index}}" alt="{{incremented @index}}" id="editQuestionRecord" class=' material-icons'>
 mic</button>
-</p>
-
-
-  <audio name="audioKey" controls=true id="questionRecordedAudio" src="{{key}}"></audio>
+  <audio name="updateAudioKey" controls=true id="updateQuestionRecordedAudio{{incremented @index}}" src="{{key}}"></audio>
   
-	  
+	  {{audioQuestionFormat}}
 {{else}}
 	<input type="text" name="updateKey" value="{{key}}" class="updateKey" />
 {{/if}}
 </td>
 					{{#if audioAnswerBoolean}}
-					<td><audio controls=true src={{answer}}> </audio></td>
+					
+
+					<p>
+						<button name="answerButton{{incremented @index}}" id="editAnswerRecord" class= 'material-icons'>
+			  mic</button>
+			  </p>
+					<td><audio name="updateAudioAnswer" id="updateAnswerRecordedAudio{{incremented @index}}" controls=true src={{answer}}> </audio></td>
 					{{else}}
 					<td>
 						<input type="text" name="updateAnswer" class="updateAnswer" value={{answer}}>

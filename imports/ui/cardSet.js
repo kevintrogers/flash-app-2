@@ -1,6 +1,5 @@
    import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { ReactiveDict } from 'meteor/reactive-dict';
 
 import './cardSet.html';
 import './editCardSet.js';
@@ -19,7 +18,7 @@ Template.cardSet.onCreated(function() {
 
 Template.cardSet.helpers({
 	editMode(){
-		editMode = Template.instance().editMode.get();
+		editMode = Session.get('editMode');
 		return editMode;
 	},
 	
@@ -37,8 +36,10 @@ Template.cardSet.events({
     CardSets.remove(this._id);
   },
   'click .edit'(event, template) {
-	  template.editMode.set(true);
 	  Session.set('currentEditId', this._id);
+	  Session.set('editMode', true)
+	  console.log(Session.get('currentEditId'))
 	  
-  }
+  },
+  
 });

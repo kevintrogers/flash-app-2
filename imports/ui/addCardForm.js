@@ -7,8 +7,8 @@ Meteor.subscribe('cardSets');
 
 Template.addCardForm.onCreated(function() {
 	this.counter = new ReactiveVar(1);
-	this.audioQuestion = new ReactiveVar(false);
-	this.audioAnswer = new ReactiveVar(false);
+	this.audioQuestion = new ReactiveVar();
+	this.audioAnswer = new ReactiveVar();
 
 	  
 });
@@ -29,17 +29,22 @@ Template.addCardForm.helpers({
 		
 	},
 	audioQuestion() {
-			return Template.instance().audioQuestion.get();
+		var findCollection = CardSets.find().fetch();
+		var cardSetsLength = findCollection.length-1;
+		var audioQuestion = findCollection[cardSetsLength].keyFormat;
+		return audioQuestion;
 	},
 	audioAnswer() {		
-		
-		return Template.instance().audioAnswer.get();
-	}
+		var findCollection = CardSets.find().fetch();
+		var cardSetsLength = findCollection.length-1;
+		var audioAnswer = findCollection[cardSetsLength].answerFormat;
+		return audioAnswer;
+	 }
 
 	
 	
 });
-Session.set('audioQuestionStatus' , false);
+
 
 Template.addCardForm.events({
 	'click .questionToggleSwitch' (event, template){
@@ -47,7 +52,6 @@ Template.addCardForm.events({
 
    		questionToggleButton.classList.toggle('questionSecondaryTogglePosition');
 		template.audioQuestion.set(!template.audioQuestion.get());
-		Session.set('audioQuestionStatus', (!Session.get('audioQuestionStatus')));
  
 		
 	},
@@ -57,24 +61,17 @@ Template.addCardForm.events({
 		var answerToggleButton = document.getElementById("answerToggleButton");
   
 		answerToggleButton.classList.toggle('answerSecondaryTogglePosition');
-		template.audioAnswer.set(!template.audioAnswer.get());
-		Session.set('audioAnswerStatus', template.audioAnswer.get());
-
-		
-		
+	
  
 		
 	},
-	'click .add-card-button' (event, template) {
-		// template.audioQuestion.set(false);
-		// template.audioAnswer.set(false);
 
-	}
 	
 });
 Template.registerHelper('incremented', function (index) {
     index++;
     return index;
 });
+
 
 

@@ -12,10 +12,22 @@ $primary-color: #5459EB;
 body {
   padding: 10px;
   font-family: sans-serif;
+ min-height: 5000px;
+  
 }
+audio {
+	border-radius: 25px;
+    border: 2px solid darken($secondary-color, 0%);
+    background: none;
+	width: 200px;
+    height: 25px;
+
+}
+
 section{
-	min-height: 100vh;
+
 }
+
 header {
 	background: $tertiary-color;
 	display: flex;
@@ -24,12 +36,15 @@ header {
 table {
 	width:100%;
 }
+td {
+	text-align: center;
+}
 .checked {
 	display:none;
 }
 .container {
 	display: flex;
-	
+overflow: auto;
 }
 section{
 	min-height: 100vh;
@@ -42,14 +57,18 @@ section{
 	display: flex;
 	flex-direction: column;
 }
-.edit-form {
-	display: flex;
-	flex-direction: column;
-}
+
+
 //login
 #login-buttons {
 	position: absolute;
 	right: 1.1em;
+	
+
+}
+.edit-form {
+	display: flex;
+	flex-direction: column;
 	
 }
 .login-link-text, .login-close-text {
@@ -228,9 +247,10 @@ button {
 
 //footer
 footer {
-	position:fixed;
+
+	position: fixed;
 	bottom: 0;
-	width: 100%;
+	width: 100vw;
 }
 footer nav {
 	background-color: $primary-color;

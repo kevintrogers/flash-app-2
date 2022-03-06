@@ -35,18 +35,25 @@
 	<div class="card" id="flashCard">
 		{{#if frontSide}}
 		<div id="front">
+			{{#if audioKeyBoolean}}
+			<audio name="audioKey" controls=true id="questionAudio" src="{{key}}"></audio>
+			
+			{{else}}
 			<p>
 				{{key}}
 			</p>
-			
+		{{/if}}	
 		</div>
 		{{else}}
 		
 		<div id="back">
+			{{#if audioAnswerBoolean}}
+			<audio name="audioAnswer" controls=true id="answerAudio" src="{{answer}}"></audio>
+			{{else}}
 			<p>
 				{{answer}}
 			</p>
-			
+			{{/if}}
 		</div>
 		{{/if}}
 		<button id="flipButton">

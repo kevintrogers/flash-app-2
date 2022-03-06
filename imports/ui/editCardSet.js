@@ -1,30 +1,43 @@
 import { Template } from 'meteor/templating';
 
+import UploadClient from '@uploadcare/upload-client'
+const client = new UploadClient({ publicKey: '7284c98dd9b56f6e7489' })
+
 import './editCardSet.html';
+import './cardSet.js';
 import { CardSets } from '../api/cards.js';
-import { Cards } from '../api/cards.js';
+
+Session.set('audioQuestionStatus', false);
+Session.set('audioAnswerStatus', false);
 
 Meteor.subscribe('cardSets');
 Meteor.subscribe('cards');
 
-let updateId;
+var qFormat, aFormat, editId;
 Template.editCardSet.onCreated(function() {
 	this.updateSetId = new ReactiveVar(this._id);
-	
+	this.editQuestionAudioSource = new ReactiveVar();
+	this.editAnswerAudioSource = new ReactiveVar();
+	this.editRandomQuestionId = new ReactiveVar();
+	this.editRandomAnswerId = new ReactiveVar();
+
 
 });
 
+var editQuestionArray =[];
+var editAnswerArray = [];
 
 Template.editCardSet.helpers({
 
 	currentSetName() {
-		var findCollection = CardSets.find({_id: Session.get('currentEditId')});
+		var findCollection = CardSets.findOne({_id: Session.get('currentEditId')});
 		var setName = findCollection.name;
 		return setName;
 	},
 	currentCreatedCards() {	 
-		
-		return CardSets.findOne({_id: Session.get('currentEditId')});
+		var id = Session.get('currentEditId')
+		editId = id;
+		return CardSets.findOne({_id: id});		
 		
 	},
 	editModeValue() {
@@ -32,90 +45,58 @@ Template.editCardSet.helpers({
     var parentInstance = parentView.templateInstance();
     return parentInstance.editMode.get();
 		
-	}
+	},
+
+	editQuestionAudioSource() {
+		return Session.get('editQuestionAudioSource');
+	},
+	editAnswerAudioSource(){
+		return Session.get('editAnswerAudioSource');
+	},
+	editRandomQuestionId(){
+		return Template.instance().editRandomQuestionId.get();
+	},
+	editRandomAnswerId(){
+		return Template.instance().editRandomAnswerId.get();
+	},
+
+
 	
 });
 
-Template.registerHelper('incremented', function (index) {
-    index++;
-    return index;
-});
+
 
 Template.editCardSet.events ({
-	'click .add-edit-card-button'(event, template){
-	 const target = event.target;
-	
-      const key = document.getElementById("key").value;
-
-	  const answer = document.getElementById("answer").value;
-
-
-		
-		let card = { 'key': key,
-					'answer': answer,
-					'removeFromSet': false,
-					'setId': this._id
-				   };
-	
-		CardSets.update( {_id: this._id}, {
-      	$push: { cards: card},
-    	});
 			
-	  document.getElementById("key").value = '';
-	  document.getElementById("answer").value = '';
-		
+	
+	
+	'click #editQuestionRecord'(event, template){
+		const target = event.target;
+		var questionIndex = target.name.substr(9);
+		editQuestionArray.push(questionIndex);
+		Session.set('editQuestionFieldArray', editQuestionArray);
 	},
-	'click .finish-edit-button'(event, template){
-	  const target = event.target;
-				
-	  const name = document.getElementById("name").value;
-	
-      const description = document.getElementById("description").value;
-
-	  const key = document.getElementById("key").value;
-		
-	  const answer = document.getElementById("answer").value;
-		
-	  var updateKey = document.querySelectorAll("input[name='updateKey']");
-	  var updateAnswer = document.querySelectorAll("input[name='updateAnswer']");
-
-		
-		let updateCards = [];
-	
-for (i = 0; i < updateKey.length; i++) {
-    updateCards.push( {
-		'key': updateKey[i].value,
-		'answer': updateAnswer[i].value
-	
-	
-	})
-}
-		console.log(updateCards);
-		
-		CardSets.update ( {_id:this._id}, {
-      	$set: { name: name,
-			   description: description,
-			cards: updateCards},
-				
-    	});		
-	var parentView = Blaze.currentView.parentView.parentView;
-    var parentInstance = parentView.templateInstance();
-    return parentInstance.editMode.set(false);
-		
+	'click #editAnswerRecord'(event, template){
+		const target = event.target;
+		var answerIndex = target.name.substr(9);
+		editAnswerArray.push(answerIndex);
+		Session.set('editAnswerFieldArray', editAnswerArray);
 	},
+	
 	'click #delete-card-button'(event, template){
 		event.preventDefault();
 		
 		const target = event.target;
 			
 		const cardToDelete = target.value;
+		console.log(cardToDelete);
 	
 		var tempId = Session.get('currentEditId')
+		console.log('editId :' + tempId);
 		
 		
 		CardSets.update( {_id: tempId}, {
       	$pull: { cards: { 'key': cardToDelete} }				
     	});	
-		Session.set('currentEditId', '');
 	}
 })
