@@ -1,142 +1,147 @@
 <template name="editCardSet">
-	<div class="edit-container">
-		
-	
-		<div class="card-content">
+  <div class="edit-container">
+    <div class="card-content">
+      <div class="form-header">{{currentSetName}}</div>
+    </div>
 
+    <div class="edit-form">
+      <div class="row">
+        <div class="column"></div>
+        <div class="card-content">
+          <label>Set Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            class="key"
+            value="{{name}}"
+          />
+        </div>
+        <div class="column">
+          <label>Set Description</label>
+          <input
+            type="text"
+            name="description"
+            id="description"
+            class="key"
+            value="{{description}}"
+          />
+        </div>
+      </div>
+    </div>
 
-			<div class="form-header">
-						{{currentSetName}}
-						audioKey: {{audioQuestionFormat}} audioanswer: {{audioAnswerFormat}}
+    <div class="row">
+      <div class="column">
+        <div class="card-content">
+          <label>Question</label>
+          {{#if keyFormat}}
 
-			</div>
-		</div>
-		
-			<div class='edit-form'>
-				<div class="row">
-					<div class="column">
-					</div> 
-					<div class="card-content">
+          <p>
+            <button id="questionRecord" class="material-icons">mic</button>
+          </p>
+          <p>
+            <audio name="audioKey" id="questionRecordedAudio"></audio>
+          </p>
+          {{else}}
+          <input type="text" name="key" value=" " id="key" />
+          {{/if}}
+        </div>
+        <div class="column">
+          <label>Answer</label>
+          {{#if answerFormat}}
 
-							<label>Set Name</label>
-							<input type="text" name="name" id="name" class="key" value={{name}} />
-						</div>
-						<div class="column">
-							<label>Set Description</label>
-							<input type="text" name="description" id="description" class="key" value={{description}} />
-						</div>
-							</div>
-						</div>
+          <p>
+            <button id="answerRecord" class="material-icons">mic</button>
+          </p>
+          <p>
+            <audio name="audioAnswer" id="answerRecordedAudio"></audio>
+          </p>
+          {{else}}
+          <input type="text" name="answer" value=" " id="answer" required />
+          {{/if}}
+        </div>
 
-				<div class="row">
-					<div class="column">
-						<div class="card-content">
+        <div class="row">
+          <button class="add-edit-card-button" type="button">Add Card</button>
 
+          <button class="finish-edit-button" type="button">Finished</button>
+        </div>
+      </div>
+    </div>
 
-							 <label>Question</label>
-							 {{#if keyFormat}}
+    <table>
+      <tr>
+        <th>Card #</th>
+        <th>Key</th>
+        <th>Answer</th>
+        <th>Remove</th>
+      </tr>
+      {{#each cards}}
+      <tr>
+        <td>{{incremented @index}}</td>
+        <td>
+          {{#if audioKeyBoolean}}
 
-					<p>
-		  <button id="questionRecord" class=' material-icons'>
-mic</button>
+          <button
+            name="keyButton{{incremented @index}}"
+            alt="{{incremented @index}}"
+            id="editQuestionRecord"
+            class="material-icons"
+          >
+            mic
+          </button>
+          <audio
+            name="updateAudioKey"
+            controls="true"
+            id="updateQuestionRecordedAudio{{incremented @index}}"
+            src="{{key}}"
+          ></audio>
 
-	  </p>
-<p>
+          {{audioQuestionFormat}} {{else}}
+          <input
+            type="text"
+            name="updateKey"
+            value="{{key}}"
+            class="updateKey"
+          />
+          {{/if}}
+        </td>
+        {{#if audioAnswerBoolean}}
 
-		  <audio name="audioKey" id="questionRecordedAudio"></audio>
-  
-	  </p>
-{{else}}
-	<input type="text" name="key" value=" " id="key" />
-{{/if}}
-						</div>
-					<div class="column">
-						 <label>Answer</label>
-						 {{#if answerFormat}}
-
-
-						 <p>
-							 <button id="answerRecord" class=' material-icons'>
-				   mic</button>
-				   
-						 </p>
-						 <p>
-							 <audio name="audioAnswer" id="answerRecordedAudio"></audio>
-					 
-						 </p>
-				   {{else}}
-					   <input type="text" name="answer"  value=" " id="answer" required/>
-				   {{/if}}
-			</div>
-
-				 <div class="row">
-
-
-					 <button class="add-edit-card-button" type="button">
-						 Add Card
-					 </button>
-
-
-
-					 <button class="finish-edit-button" type="button">
-						 Finished
-					 </button>
-					 </div>
-				</div> 
-			</div> 
-
-
-
-				<table>
-					
-				  <tr>
-					<th>Card #</th>
-					<th>Key</th>
-					<th>Answer</th>
-					<th>Remove</th>
-				  </tr>
-				{{#each cards}}
-				<tr>
-					<td>{{incremented @index}}  </td>
-					<td>	
-									
-					{{#if audioKeyBoolean}}
-
-					
-		  <button name="keyButton{{incremented @index}}" alt="{{incremented @index}}" id="editQuestionRecord" class=' material-icons'>
-mic</button>
-  <audio name="updateAudioKey" controls=true id="updateQuestionRecordedAudio{{incremented @index}}" src="{{key}}"></audio>
-  
-	  {{audioQuestionFormat}}
-{{else}}
-	<input type="text" name="updateKey" value="{{key}}" class="updateKey" />
-{{/if}}
-</td>
-					{{#if audioAnswerBoolean}}
-					
-
-					<p>
-						<button name="answerButton{{incremented @index}}" id="editAnswerRecord" class= 'material-icons'>
-			  mic</button>
-			  </p>
-					<td><audio name="updateAudioAnswer" id="updateAnswerRecordedAudio{{incremented @index}}" controls=true src={{answer}}> </audio></td>
-					{{else}}
-					<td>
-						<input type="text" name="updateAnswer" class="updateAnswer" value={{answer}}>
-					</td>
-					{{/if}}
-					<td>	
-
-						 <button id="delete-card-button" name="deletevalue" value={{key}}>
-							 x
-						</button>
-					</td>
-				</tr>
-				{{/each}}
-
-				</table>
-		
-	</div>
-	
-
+        <p>
+          <button
+            name="answerButton{{incremented @index}}"
+            id="editAnswerRecord"
+            class="material-icons"
+          >
+            mic
+          </button>
+        </p>
+        <td>
+          <audio
+            name="updateAudioAnswer"
+            id="updateAnswerRecordedAudio{{incremented @index}}"
+            controls="true"
+            src="{{answer}}"
+          ></audio>
+        </td>
+        {{else}}
+        <td>
+          <input
+            type="text"
+            name="updateAnswer"
+            class="updateAnswer"
+            value="{{answer}}"
+          />
+        </td>
+        {{/if}}
+        <td>
+          <button id="delete-card-button" name="deletevalue" value="{{key}}">
+            x
+          </button>
+        </td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
 </template>

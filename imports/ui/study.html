@@ -1,72 +1,97 @@
-<template id="study" name="study">
+<template name="study">
+  <p>cards viewed: {{cardsViewed}}</p>
+  <p>cards mastered: {{cardsMastered}}</p>
+  <p>percentage: {{percentage}}</p>
+  {{#if setChosen}} {{> timer}} 
 
-		
-	
-	{{#if setChosen}}
-		{{#each cardStackItems.cards}}
-			
+  <p>cards viewed: {{cardsViewed}}</p>
+  <p>cards mastered: {{cardsMastered}}</p> 
+  {{#if emptyCardStack}}
+ 
+  
+  <button id="resetStudyButton" class="btn-floating">reset</button> 
+  <form action="https://formsubmit.co/kevin_t_rogers@outlook.com" method="POST">
+    <!-- 
+    <button id="sendReportButton" class="btn-floating"type="submit">Send Report</button> -->
+    <input type="hidden" name="cardViewed" value="{{cardsViewed}}">
+    <input type="hidden" name="cardsMastered" value="{{cardsMastered}}">
+    <input type="hidden" name="percentage" value="{{percentage}}">
+    <button type="submit">Send Report</button>
+</form>
+  {{else}}
 
-				{{> cardItem}}
+<div id="currentCardItem">
 
-		{{/each}}
-	
-		
-	{{else}}
-	<h5>
-		Choose Set To Study
-	</h5>
-     
-		  
-		  
-        {{#each cardSets}}
-          	{{> cardSet}}
-		  
-        {{/each}}
-		  
-      
-	
-	{{/if}}
+  
+  <div class="card" id="flashcard">
+    {{#if frontSide}}
+    <div id="front">
+      {{#if currentCard.audioKeyBoolean}}
+      <audio
+        name="audioKey"
+        controls="true"
+        id="questionAudio"
+        src="{{currentCardKey}}"
+      ></audio>
 
+      {{else}}
+      <p>{{currentCard.key}}</p>
+      {{/if}}
+    </div>
+    {{else}}
+
+    <div id="back">
+      {{#if currentCard.audioAnswerBoolean}}
+      <audio
+        name="audioAnswer"
+        controls="true"
+        id="answerAudio"
+        src="{{currentCard.answer}}"
+      ></audio>
+      {{else}}
+      <p>{{currentCard.answer}}</p>
+      {{/if}}
+    </div>
+    
+    {{/if}}
+    <button id="flipButton">Flip</button>
+    <br />
+    <input
+      type="checkbox"
+      class="removeBox"
+      id="flashCard"
+      name="remove"
+      checked="{{checked}}"
+      value="{{currentCard.key}}"
+    />
+    <label for="removeBox"> Remove from set</label>
+  </div>
+  <div class="studyButtonGroup">
+    <button class="waves-effect waves-light btn-large" id="counterDownButton">
+      <span class="material-symbols-outlined"> arrow_circle_left </span>
+    </button>
+    <button class="waves-effect waves-light btn-large" id="counterUpButton">
+      <span class="material-symbols-outlined"> arrow_circle_right </span>
+    </button>
+  </div>
+ 
+</div>
+
+
+
+  {{/if}}
+ 
+  {{else}}
+  <h5>Choose Set To Study</h5>
+
+  {{#each cardSets}} {{> cardSet}} {{/each}} {{/if}} 
 </template>
-
-
-<template name="cardItem">
-
-	<div class="card" id="flashCard">
-		{{#if frontSide}}
-		<div id="front">
-			{{#if audioKeyBoolean}}
-			<audio name="audioKey" controls=true id="questionAudio" src="{{key}}"></audio>
-			
-			{{else}}
-			<p>
-				{{key}}
-			</p>
-		{{/if}}	
-		</div>
-		{{else}}
-		
-		<div id="back">
-			{{#if audioAnswerBoolean}}
-			<audio name="audioAnswer" controls=true id="answerAudio" src="{{answer}}"></audio>
-			{{else}}
-			<p>
-				{{answer}}
-			</p>
-			{{/if}}
-		</div>
-		{{/if}}
-		<button id="flipButton">
-			Flip
-		</button>
-		<br>
-		<input type="checkbox" class="removeBox" id="flashCard" name="remove" checked={{checked}} value={{key}}>
-		<label for="removeBox"> Remove from set</label>
-	
-	
-	
-	
-	</div>
+<template name="testCard">
+  <h6>new card</h6>
+  <p>
+  {{key}}
+  {{answer}}
+  </p>
 
 </template>
 

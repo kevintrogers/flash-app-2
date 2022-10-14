@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 
 import UploadClient from '@uploadcare/upload-client'
+import { Email } from 'meteor/email'
 
 const client = new UploadClient({ publicKey: '7284c98dd9b56f6e7489' })
      
@@ -26,7 +27,8 @@ if (Meteor.isServer) {
 
       
 
-    }
+    },
+
 
   });
  
