@@ -5,7 +5,8 @@
     }
     
   },
-  "MONGO_URL": {
-    "//kevin:Y7LEM!*4UFYf@cluster0.nsqbpsx.mongodb.net/?retryWrites=true&w=majority"
-}
+  "galaxy.meteor.com": {
+    "env": {
+      "MONGO_URL": 'mongodb+srv://MonkeyMaker:pyMhPGk4PiuNErt5@cluster0.ntqah.mongodb.net/stadium-categorizer?retryWrites=true&w=majority'
+    }
 }
