@@ -3,5 +3,8 @@
     "uploadcare": {
       "publicKey": "7284c98dd9b56f6e7489"
     }
+    
   }
+  "MONGO_URL": {
+    "//kevin:Y7LEM!*4UFYf@cluster0.nsqbpsx.mongodb.net/?retryWrites=true&w=majority"
 }
