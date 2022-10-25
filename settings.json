@@ -1,15 +1,8 @@
 {
-  "public": {
-    "uploadcare": {
-      "publicKey": "7284c98dd9b56f6e7489"
-    }
-    
-  },
-  {
   "galaxy.meteor.com": {
-    "env": {
-      "MONGO_URL": "mongodb+srv://MonkeyMaker:pyMhPGk4PiuNErt5@cluster0.ntqah.mongodb.net/stadium-categorizer?retryWrites=true&w=majority"
-    }
-  }
-}
+       "env": {
+        "MONGO_URL": "mongodb+srv://MonkeyMaker:pyMhPGk4PiuNErt5@cluster0.ntqah.mongodb.net/stadium-categorizer?retryWrites=true&w=majority"
+               "MONGO_OPLOG_URL": ...
+       }
+   }
 }
